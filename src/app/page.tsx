@@ -17,7 +17,7 @@ import {
     Instagram
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, ExternalLink } from 'lucide-react';
+import { AlertCircle, ExternalLink, Eye, AlertTriangle, Activity } from 'lucide-react';
 
 // --- Components ---
 
@@ -88,6 +88,110 @@ const PricingCard = ({ title, price, features, highlighted = false, buttonText =
         </button>
     </div>
 );
+
+const PreviewShowcase = () => {
+    const [scanPos, setScanPos] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setScanPos(prev => (prev >= 100 ? 0 : prev + 0.3));
+        }, 30);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="mt-20 relative max-w-5xl mx-auto hidden md:block group">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#222427] via-transparent to-transparent z-10 pointer-events-none" />
+
+            <div className="bg-[#2a2d31] rounded-[40px] p-4 border border-white/5 shadow-2xl overflow-hidden relative">
+                <div className="relative rounded-[30px] overflow-hidden aspect-[16/9] bg-black">
+                    <img
+                        src="/demo-doc.png"
+                        alt="Auditoría Forense en Proceso"
+                        className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105"
+                    />
+
+                    {/* Laser Scanner */}
+                    <motion.div
+                        className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#652BEB] to-transparent z-20 shadow-[0_0_20px_#652BEB]"
+                        style={{ top: `${scanPos}%` }}
+                    />
+
+                    {/* Forensic Visual Layer */}
+                    <div
+                        className="absolute inset-0 z-10 pointer-events-none transition-all duration-300"
+                        style={{
+                            clipPath: `inset(0 0 ${100 - scanPos}% 0)`,
+                            backgroundColor: 'rgba(101, 43, 235, 0.05)'
+                        }}
+                    >
+                        {/* Findings Highlighters - Frame-perfect for the Spanish bill */}
+                        {/* Mantención Ascensores Line */}
+                        <div className="absolute top-[51.1%] left-[18%] w-[62%] h-[4.5%] border-2 border-red-500/50 bg-red-500/10 rounded-lg flex items-center justify-end pr-4 backdrop-blur-sm animate-pulse overflow-hidden">
+                            <div className="flex items-center gap-2">
+                                <AlertTriangle size={12} className="text-red-500" />
+                                <span className="text-[9px] font-black uppercase text-red-500 tracking-tighter">Sobreprecio Detectado +24%</span>
+                            </div>
+                        </div>
+
+                        {/* Gasto Eléctrico Común Line */}
+                        <div className="absolute top-[56.1%] left-[18%] w-[62%] h-[4.5%] border-2 border-[#30E89E]/50 bg-[#30E89E]/10 rounded-lg flex items-center justify-end pr-4 backdrop-blur-sm">
+                            <div className="flex items-center gap-2">
+                                <ShieldCheck size={12} className="text-[#30E89E]" />
+                                <span className="text-[9px] font-black uppercase text-[#30E89E] tracking-tighter">Variación IPC Normal</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Floating UI Elements */}
+                <AnimatePresence>
+                    {scanPos > 15 && (
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="absolute top-10 left-10 z-30 bg-[#222427]/90 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-2xl border-l-4 border-l-[#652BEB]"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-[#652BEB]/20 flex items-center justify-center">
+                                    <Activity size={16} className="text-[#652BEB]" />
+                                </div>
+                                <div>
+                                    <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">Analizando</p>
+                                    <p className="text-xs font-black italic text-white/90">Forensik_Engine_Alpha_v1.0</p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                    {scanPos > 65 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            className="absolute bottom-10 right-10 z-30 bg-[#222427]/90 backdrop-blur-md border border-white/10 p-6 rounded-[32px] shadow-2xl max-w-[240px]"
+                        >
+                            <div className="flex items-center justify-between mb-4">
+                                <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                                    Anomalía detectada
+                                </p>
+                                <AlertTriangle size={14} className="text-red-500" />
+                            </div>
+                            <p className="text-xs text-gray-400 leading-relaxed mb-4">
+                                Se detectó que el contrato de <span className="text-white font-bold">Mantención de Ascensores</span> excede el benchmark regional en <span className="text-red-400">$245k</span>.
+                            </p>
+                            <button className="w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold uppercase py-2 rounded-xl border border-white/10 transition-all">
+                                Ver detalle forense
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </div>
+    );
+};
 
 export default function LandingPage() {
     const [linesAnalyzed, setLinesAnalyzed] = useState(0);
@@ -190,36 +294,7 @@ export default function LandingPage() {
                     </button>
                 </motion.div>
 
-                {/* Hero Image Mockup (Simplified for code brevity) */}
-                <div className="mt-20 relative max-w-5xl mx-auto hidden md:block">
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#222427] via-transparent to-transparent z-10" />
-                    <div className="bg-[#2a2d31] rounded-[40px] p-4 border border-white/5 shadow-2xl overflow-hidden">
-                        <div className="bg-[#652BEB]/5 rounded-[30px] aspect-video flex items-center justify-center border border-[#652BEB]/10 p-12">
-                            <motion.div
-                                initial={{ opacity: 0, y: 40 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                className="bg-white rounded-3xl shadow-2xl w-full h-full p-8 flex flex-col gap-6"
-                            >
-                                <div className="flex justify-between items-center mb-4">
-                                    <div className="w-24 h-4 bg-gray-200 rounded-full" />
-                                    <div className="w-6 h-6 bg-gray-200 rounded-full" />
-                                </div>
-                                <div className="space-y-4">
-                                    {[1, 2, 3].map(i => (
-                                        <div key={i} className="flex items-center gap-4 py-2 border-b border-gray-100">
-                                            <div className="w-10 h-10 bg-gray-100 rounded-lg" />
-                                            <div className="space-y-2 flex-grow">
-                                                <div className="w-1/2 h-3 bg-gray-200 rounded-full" />
-                                                <div className="w-1/4 h-2 bg-gray-100 rounded-full" />
-                                            </div>
-                                            <div className="w-16 h-4 bg-red-100 rounded-full border border-red-200" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        </div>
-                    </div>
-                </div>
+                <PreviewShowcase />
             </section>
 
             {/* Comparison Section */}
